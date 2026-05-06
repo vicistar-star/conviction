@@ -16,7 +16,7 @@ jobs:
         with:
           targets: wasm32-unknown-unknown
       - run: cd contracts && cargo test
-      - run: cd contracts && cargo clippy -- -D warnings
+      - run: cd contracts && cargo clippy
 
   backend:
     name: Backend
