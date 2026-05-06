@@ -1,0 +1,79 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Market {
+  id             String   @id @default(cuid())
+  contractId     String   @unique
+  title          String
+  outcomes       String[]
+  resolutionType String
+  oracleAddress  String
+  deadline       DateTime
+  minStake       BigInt
+  resolved       Boolean  @default(false)
+  creatorAddress String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  stakes         Stake[]
+}
+
+model Stake {
+  id             String   @id @default(cuid())
+  contractId     String   @unique
+  stakerAddress  String
+  marketId       String
+  market         Market   @relation(fields: [marketId], references: [id])
+  outcomeIndex   Int
+  amount         BigInt
+  stakedAt       DateTime @default(now())
+  unstaked       Boolean  @default(false)
+  rewardClaimed  Boolean  @default(false)
+}
+
+model User {
+  id                  String   @id @default(cuid())
+  stellarAddress      String   @unique
+  totalPredictions    Int      @default(0)
+  correctPredictions  Int      @default(0)
+  totalConvictionDays Int      @default(0)
+  reputationTier      String   @default("Apprentice")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model Circle {
+  id            String   @id @default(cuid())
+  contractId    String   @unique
+  name          String
+  circleType    String
+  membershipFee BigInt   @default(0)
+  creatorAddress String
+  createdAt     DateTime @default(now())
+  members       CircleMember[]
+}
+
+model CircleMember {
+  id        String   @id @default(cuid())
+  circleId  String
+  circle    Circle   @relation(fields: [circleId], references: [id])
+  address   String
+  joinedAt  DateTime @default(now())
+
+  @@unique([circleId, address])
+}
+
+model OracleReport {
+  id        String   @id @default(cuid())
+  marketId  String
+  source    String
+  value     Float
+  timestamp DateTime @default(now())
+}
