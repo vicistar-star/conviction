@@ -1,0 +1,10 @@
+[workspace]
+members = [
+    "prediction-market",
+    "reputation",
+    "circle",
+]
+resolver = "2"
+
+[workspace.dependencies]
+soroban-sdk = { version = "21.0.0", features = ["testutils"] }
